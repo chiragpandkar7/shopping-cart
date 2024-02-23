@@ -1,41 +1,29 @@
 import React, { useState, useEffect } from 'react';
-import { Button, Card, CardContent, Typography } from '@mui/material';
+import ProductCard from '../ProductCard/ProductCard.js';
+import Cart from '../Cart/Cart.js';
+import axios from 'axios';
 
 const Products = () => {
   const [products, setProducts] = useState([]);
+  const [cartItems, setCartItems] = useState([])
 
   useEffect(() => {
-    // Fetch products data or use dummy data
-    // For simplicity, using dummy data
-    setProducts([
-      { id: 1, name: 'Product 1', price: 10.99 },
-      { id: 2, name: 'Product 2', price: 19.99 },
-      // Add more products as needed
-    ]);
+    const fetchData = async () => {
+      const response = await axios.get('https://dummyjson.com/products')
+      setProducts(response.data.products);
+    };
+    fetchData();
   }, []);
 
   const addToCart = (product) => {
-    // Implement your logic to add product to the cart
-    console.log(`Added ${product.name} to the cart`);
+    setCartItems((cartItems) => [...cartItems, product]);
+    alert(`Added ${product.title} to the cart`);
   };
 
   return (
-    <div>
-      <h2>Products Page</h2>
+    <div style={{ display: 'flex', flexWrap: 'wrap', gap: '25px', padding:'20px' }}>
       {products.map((product) => (
-        <Card key={product.id} sx={{ maxWidth: 300, marginBottom: 2 }}>
-          <CardContent>
-            <Typography variant="h5" component="div">
-              {product.name}
-            </Typography>
-            <Typography sx={{ mb: 1.5 }} color="text.secondary">
-              ${product.price.toFixed(2)}
-            </Typography>
-            <Button onClick={() => addToCart(product)} variant="contained">
-              Add to Cart
-            </Button>
-          </CardContent>
-        </Card>
+        <ProductCard key={product.id} product={product} addToCart={addToCart} />
       ))}
     </div>
   );
